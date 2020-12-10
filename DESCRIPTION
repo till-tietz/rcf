@@ -16,3 +16,4 @@ Imports:
     furrr (>= 0.2.1),
     stringr(>= 1.4.0),
     dplyr(>= 1.0.2)
+
