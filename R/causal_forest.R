@@ -52,7 +52,7 @@ causal_forest <- function(data,target,covariates,treatment,minsize,alpha,n_trees
     return(out)
   }
   varimp_out <- purrr::map_dfr(1:length(trees), ~extract_varimp(.x))
-  varimp_out <- dplyr::filter(varimp_out, depth > 0)
+  varimp_out <- dplyr::filter(varimp_out, varimp_out[["depth"]] > 0)
 
   #prep cate estimates
   return(list(cate_estimates = cate_out, split_vars = varimp_out))
