@@ -1,9 +1,9 @@
 #'Trains a causal forest that can be used to estimate conditional average treatment effects.
 #'
-#' @param data a data frame with predictor, treatment assignment and outcome variables
+#' @param data a data frame with predictor, treatment assignment and outcome variables and no NA
 #' @param target name of the outcome variable as character vector
 #' @param covariates names of the predictors as character vector
-#' @param treatment name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 == treatment, 0 == control with no NA)
+#' @param treatment name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 == treatment, 0 == control)
 #' @param minsize minimum number of treatment and control observations that must be present in each split as numeric vector
 #' @param alpha weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.
 #' @param n_trees number of trees to grow as numeric vector
