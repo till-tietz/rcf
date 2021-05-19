@@ -9,12 +9,12 @@
 #' @param alpha weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.
 #' @param feature_fraction fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1.
 #' @param honest_split enables honest splitting. Default TRUE.
-#' @param honesty_fraction fraction of data to be used for honest estimation as numeric vector between 0-1.
+#' @param honesty_fraction fraction of data to be used for honest estimation as numeric vector between 0-1. Default 0.5.
 #' @return list of causal trees.
 #' @export
 
 
-causal_forest <- function(n_trees, data, outcome, covariates, treat, minsize, alpha, feature_fraction, honest_split, honesty_fraction){
+causal_forest <- function(n_trees, data, outcome, covariates, treat, minsize, alpha, feature_fraction, honest_split = TRUE, honesty_fraction = 0.5){
   trees <- furrr::future_map(1:n_trees, ~causal_tree(data = data,
                                                      outcome = outcome,
                                                      covariates = covariates,
