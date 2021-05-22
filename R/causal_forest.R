@@ -13,7 +13,6 @@
 #' @return list of causal trees.
 #' @export
 
-
 causal_forest <- function(n_trees, data, outcome, covariates, treat, minsize, alpha, feature_fraction, honest_split = TRUE, honesty_fraction = 0.5){
   trees <- furrr::future_map(1:n_trees, ~causal_tree(data = data,
                                                      outcome = outcome,
