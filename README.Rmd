@@ -121,9 +121,7 @@ ggplot(plot_data, aes(x = cate, y = grf_cate))+
 rfc serves as an estimator for conditional average treatment effects by explicitly 
 optimizing on treatment effect heterogeneity. This is achieved by recursively splitting a sample such as to maximize the following quantity of interest: 
 
-<center>
 ![](man/figures/eq_1.png)
-</center>
 
 Mean squared difference in treatment effects 𝜏 across sub-samples created by a set of all possible partitions of a sample 𝑃 minus the sum of variances in outcomes for treatment and control units summed across sub-samples. The two components of the equation are weighted by the parameter 𝛼. 
 
@@ -143,11 +141,9 @@ terminal leaf.
   9. Repeat 1-8 n_trees times. 
   10. Push a test sample down each tree in the forest (i.e. subset the test sample according to the splitting rules of each tree in the forest). Record honest CATE estimates of all leaves a test sample observation falls into. Compute the mean of all these honest CATE estimates. This is the CATE for the given observation. 
   
-
 ### Variable Importance 
 
 Variable Importance is computed as a weighted sum of how often a variable was split at depth k within a tree. 
 
-<center>
 ![](man/figures/eq_2.png)
-</center>
+
