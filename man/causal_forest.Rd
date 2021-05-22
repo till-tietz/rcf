@@ -5,38 +5,41 @@
 \title{Trains a causal forest that can be used to estimate conditional average treatment effects.}
 \usage{
 causal_forest(
+  n_trees,
   data,
-  target,
+  outcome,
   covariates,
-  treatment,
+  treat,
   minsize,
   alpha,
-  n_trees,
-  feature_frac,
-  honesty.fraction
+  feature_fraction,
+  honest_split = TRUE,
+  honesty_fraction = 0.5
 )
 }
 \arguments{
-\item{data}{a data frame with predictor, treatment assignment and outcome variables}
+\item{n_trees}{number of trees to grow as numeric vector.}
 
-\item{target}{name of the outcome variable as character vector}
+\item{data}{a data frame with predictor, treatment assignment and outcome variables.}
 
-\item{covariates}{names of the predictors as character vector}
+\item{outcome}{name of the outcome variable as character vector.}
 
-\item{treatment}{name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 == treatment, 0 == control with no NA)}
+\item{covariates}{names of the predictors as character vector.}
 
-\item{minsize}{minimum number of treatment and control observations that must be present in each split as numeric vector}
+\item{treat}{name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 = treatment, 0 = control with no NA).}
+
+\item{minsize}{minimum number of treatment and control observations that must be present in each split as numeric vector.}
 
 \item{alpha}{weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.}
 
-\item{n_trees}{number of trees to grow as numeric vector}
+\item{feature_fraction}{fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1.}
 
-\item{feature_frac}{fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1}
+\item{honest_split}{enables honest splitting. Default TRUE.}
 
-\item{honesty.fraction}{fraction of data to be used for honest estimation as numeric vector between 0-1}
+\item{honesty_fraction}{fraction of data to be used for honest estimation as numeric vector between 0-1. Default 0.5.}
 }
 \value{
-trained causal forest (list of two data frames with splitting information)
+list of causal trees.
 }
 \description{
 Trains a causal forest that can be used to estimate conditional average treatment effects.

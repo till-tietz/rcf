@@ -1,7 +1,7 @@
 Package: rcf
 Type: Package
 Title: Heterogenous Treatment Effect Estimation
-Version: 0.1.0
+Version: 1.0.0
 Author: Till Tietz
 Maintainer: Till Tietz <ttietz2014@gmail.com>
 Description: rcf is a stripped down  experimental rebuild 
@@ -15,5 +15,6 @@ Imports:
     purrr (>= 0.3.0),
     furrr (>= 0.2.1),
     stringr(>= 1.4.0),
-    dplyr(>= 1.0.2)
+    dplyr(>= 1.0.2),
+    stats(>= 3.6.2)
 RoxygenNote: 7.1.1
