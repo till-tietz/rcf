@@ -10,9 +10,10 @@ causal_forest(
   outcome,
   covariates,
   treat,
-  minsize,
-  alpha,
-  feature_fraction,
+  minsize = 5,
+  alpha = 0.05,
+  feature_fraction = 0.3,
+  sample_fraction = 0.5,
   honest_split = TRUE,
   honesty_fraction = 0.5
 )
@@ -28,11 +29,13 @@ causal_forest(
 
 \item{treat}{name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 = treatment, 0 = control with no NA).}
 
-\item{minsize}{minimum number of treatment and control observations that must be present in each split as numeric vector.}
+\item{minsize}{minimum number of treatment and control observations that must be present in each split as numeric vector. Default 5.}
 
-\item{alpha}{weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.}
+\item{alpha}{weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects. Default 0.05.}
 
-\item{feature_fraction}{fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1.}
+\item{feature_fraction}{fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1. Default 0.3.}
+
+\item{sample_fraction}{fraction of observations to fit each tree with. Default 0.5.}
 
 \item{honest_split}{enables honest splitting. Default TRUE.}
 
