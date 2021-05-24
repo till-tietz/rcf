@@ -12,6 +12,7 @@ causal_tree(
   minsize,
   alpha,
   feature_fraction,
+  sample_fraction,
   honest_split,
   honesty_fraction
 )
@@ -30,6 +31,8 @@ causal_tree(
 \item{alpha}{weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.}
 
 \item{feature_fraction}{fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1.}
+
+\item{sample_fraction}{fraction of observations to fit tree with.}
 
 \item{honest_split}{enables honest splitting. Default TRUE.}
 
