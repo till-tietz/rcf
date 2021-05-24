@@ -4,7 +4,7 @@
 \alias{variable_importance}
 \title{Computes variable importance measures for a causal forest}
 \usage{
-variable_importance(cf, covariates, n, k)
+variable_importance(cf, covariates, n, d)
 }
 \arguments{
 \item{cf}{output of the rcf causal_forest function}
@@ -13,7 +13,7 @@ variable_importance(cf, covariates, n, k)
 
 \item{n}{maximum tree depth of splits to be considered for variable importance computation}
 
-\item{k}{decay parameter controlling weighting of splits at different depths for variable importance computation}
+\item{d}{decay parameter controlling weighting of splits at different depths for variable importance computation}
 }
 \value{
 a data frame of variables and their importance measures

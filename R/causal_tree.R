@@ -7,15 +7,17 @@
 #' @param minsize minimum number of treatment and control observations that must be present in each split as numeric vector.
 #' @param alpha weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.
 #' @param feature_fraction fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1.
+#' @param sample_fraction fraction of observations to fit tree with.
 #' @param honest_split enables honest splitting. Default TRUE.
 #' @param honesty_fraction fraction of data to be used for honest estimation as numeric vector between 0-1.
 #' @return trained causal tree (splitting structure, cate estimates, oob samples, data for variable importance computation)
 #' @export
 
-causal_tree <- function(data, outcome, covariates, treat, minsize, alpha, feature_fraction, honest_split, honesty_fraction){
+
+causal_tree <- function(data, outcome, covariates, treat, minsize, alpha, feature_fraction, sample_fraction, honest_split, honesty_fraction){
 
   covariates <- sample(covariates, size = ceiling(length(covariates) * feature_fraction), replace = FALSE)
-  sample_index <- sample(1:nrow(data), size = nrow(data), replace = TRUE)
+  sample_index <- sample(1:nrow(data), size = ceiling(sample_fraction * nrow(data)), replace = FALSE)
   oob <- setdiff(c(1:nrow(data)), sample_index)
   data <- data[sample_index, c(covariates, outcome, treat)]
 

@@ -6,31 +6,40 @@
 \usage{
 causal_tree(
   data,
-  target,
+  outcome,
   covariates,
-  treatment,
+  treat,
   minsize,
   alpha,
-  honesty.fraction
+  feature_fraction,
+  sample_fraction,
+  honest_split,
+  honesty_fraction
 )
 }
 \arguments{
-\item{data}{a data frame with predictor, treatment assignment and outcome variables}
+\item{data}{a data frame with predictor, treatment assignment, outcome variables and no NA.}
 
-\item{target}{name of the outcome variable as character vector}
+\item{outcome}{name of the outcome variable as character vector.}
 
-\item{covariates}{names of the predictors as character vector}
+\item{covariates}{names of the predictors as character vector.}
 
-\item{treatment}{name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 == treatment, 0 == control with no NA)}
+\item{treat}{name of the treatment indicator variable as character vector (treatment indicator must be binary numeric 1 == treatment, 0 == control with no NA).}
 
-\item{minsize}{minimum number of treatment and control observations that must be present in each split as numeric vector}
+\item{minsize}{minimum number of treatment and control observations that must be present in each split as numeric vector.}
 
-\item{alpha}{weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects}
+\item{alpha}{weighting of cost function numeric vector between 0-1. weights closer to 1 put more emphasis on maximizing heterogeneity. weights closer to 0 put more weight on precisely estimating treatment effects.}
 
-\item{honesty.fraction}{fraction of data to be used for honest estimation as numeric vector between 0-1}
+\item{feature_fraction}{fraction of total number of predictors to use in fitting each tree as numeric vector between 0-1.}
+
+\item{sample_fraction}{fraction of observations to fit tree with.}
+
+\item{honest_split}{enables honest splitting. Default TRUE.}
+
+\item{honesty_fraction}{fraction of data to be used for honest estimation as numeric vector between 0-1.}
 }
 \value{
-trained causal tree (list of three data frames with splitting information)
+trained causal tree (splitting structure, cate estimates, oob samples, data for variable importance computation)
 }
 \description{
 Trains a single causal tree

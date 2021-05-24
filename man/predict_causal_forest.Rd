@@ -4,15 +4,17 @@
 \alias{predict_causal_forest}
 \title{Estimates conditional average treatment effects based on a trained causal forest and test data}
 \usage{
-predict_causal_forest(cf, test)
+predict_causal_forest(data, cf, predict_obb = TRUE)
 }
 \arguments{
+\item{data}{a data frame with observations to predict and no NA}
+
 \item{cf}{output of the rcf causal_forest function}
 
-\item{test}{a data frame of test data}
+\item{predict_oob}{set to TRUE if you want to predict cates on the observations you used to fit the causal forest (uses out of bag observations); set to FALSE if you wish to use a test data set. Default TRUE.}
 }
 \value{
-result list consisting of: 1 data frame with predictors, treatment assignment and cate estimates, 2 list of vectors with cate estimates for each observation
+a data.frame with a cate estimate for each observation.
 }
 \description{
 Estimates conditional average treatment effects based on a trained causal forest and test data
