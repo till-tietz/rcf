@@ -131,6 +131,13 @@ plot <- readRDS("man/figures/grf_rcf_plot.rds")
 plot
 ```
 
+
+## Performance compared to other methods 
+
+We'll test the performance of the rcf causal forest against a linear regression and knn approach to estimating heterogeneous treatment effects. We'll use a simulated data set with explicit treatment effect heterogeneity across two variables. 
+
+![](man/figures/performance.png)
+
 ## Methodology
 
 ### Explicitly Optimizing Heterogeneity
