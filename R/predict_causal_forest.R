@@ -21,17 +21,25 @@ predict_causal_forest <- function(data, cf, predict_obb = TRUE){
     cate <- function(x){
       leaf <- tree_i[["cate_estimate"]][["filter"]][x]
       obs <- as.numeric(rownames(subset(oob_data, eval(parse(text = leaf)))))
-      obs <- data.frame("obs" = obs)
-      obs[["val_t"]] <- list(tree_i[["cate_estimate"]][["outcome_t"]][[x]])
-      obs[["val_c"]] <- list(tree_i[["cate_estimate"]][["outcome_c"]][[x]])
+
+      if(length(obs) == 0){
+        obs <- data.frame("obs" = NA)
+        obs[["val_t"]] <- list(NA)
+        obs[["val_c"]] <- list(NA)
+      } else {
+        obs <- data.frame("obs" = obs)
+        obs[["val_t"]] <- list(tree_i[["cate_estimate"]][["outcome_t"]][[x]])
+        obs[["val_c"]] <- list(tree_i[["cate_estimate"]][["outcome_c"]][[x]])
+      }
       return(obs)
     }
-    obs_cate <- furrr::future_map(1:length(tree_i[["cate_estimate"]][["filter"]]), ~cate(.x))
+    obs_cate <- purrr::map(1:length(tree_i[["cate_estimate"]][["filter"]]), ~cate(.x))
     obs_cate <- do.call(rbind,obs_cate)
     return(obs_cate)
   }
-  cates <- furrr::future_map(1:length(cf), ~each_tree(.x), .progress = TRUE)
+  cates <- purrr::map(1:length(cf), ~each_tree(.x))
   cates <- as.data.frame(do.call(rbind, cates))
+  cates <- stats::na.omit(cates)
   cates <- dplyr::group_split(dplyr::group_by(cates, obs))
 
   each_obs <- function(x){
