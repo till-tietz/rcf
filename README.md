@@ -79,18 +79,18 @@ cate <- rcf::predict_causal_forest(data = data, cf = cf, predict_obb = TRUE)
 predict\_causal\_forest returns a data.frame of observation ids and cate
 estimates
 
-| obs\_id |        cate |
-| ------: | ----------: |
-|       1 | \-0.1917451 |
-|       2 | \-0.1024732 |
-|       3 | \-0.1354575 |
-|       4 | \-0.1399241 |
-|       5 | \-0.1071271 |
-|       6 | \-0.1954411 |
-|       7 | \-0.0700747 |
-|       8 | \-0.0337245 |
-|       9 | \-0.1548139 |
-|      10 | \-0.0761274 |
+| obs |        cate |
+| --: | ----------: |
+|   1 |   0.0360689 |
+|   2 | \-0.0211817 |
+|   3 |   0.0651284 |
+|   4 |   0.1293927 |
+|   5 | \-0.0417453 |
+|   6 |   0.0680441 |
+|   7 |   0.0322248 |
+|   8 |   0.0032084 |
+|   9 | \-0.0672649 |
+|  10 |   0.0161745 |
 
 variable\_importance generates a data.frame of variable importance
 metrics
@@ -101,15 +101,15 @@ var_importance <- rcf::variable_importance(cf = cf, covariates = vars, n = 4, d 
 
 | variable | importance         |
 | :------- | :----------------- |
-| V3       | 0.0920672507695951 |
-| V5       | 0.0886573525929434 |
-| V9       | 0.0886573525929434 |
-| V2       | 0.0869524035046176 |
-| V4       | 0.0869524035046176 |
-| V6       | 0.0767227089746626 |
-| V1       | 0.0716078617096851 |
-| V8       | 0.0562633199147526 |
-| V7       | 0.0545583708264267 |
+| V2       | 0.248821710752319  |
+| V9       | 0.126636894537959  |
+| V7       | 0.116743387152181  |
+| V5       | 0.097945723119203  |
+| V8       | 0.0870628649948471 |
+| V3       | 0.0613397457918241 |
+| V6       | 0.0593610443146685 |
+| V4       | 0.0415527310202679 |
+| V1       | 0.0385846788045345 |
 
 ## Performance compared to grf
 
@@ -199,16 +199,13 @@ parameter 𝛼.
     is fully grown at this point.
 8.  Push the honest estimation sample down the tree (i.e. subset the
     honest estimation sample according to the splitting rules of the
-    tree grown with the tree fitting sample). In each terminal leaf
-    compute the average treatment effect with the honest estimation
-    sample observations. These average treatment effects become the CATE
-    estimates for each terminal leaf.
+    tree grown with the tree fitting sample).
 9.  Repeat 1-8 n\_trees times.
 10. Push a test sample down each tree in the forest (i.e. subset the
     test sample according to the splitting rules of each tree in the
-    forest). Record honest CATE estimates of all leaves a test sample
-    observation falls into. Compute the mean of all these honest CATE
-    estimates. This is the CATE for the given observation.
+    forest). For each observation, record the honest sample observations
+    in each terminal leaf it falls into. Compute CATE for each
+    observation using its honest sample observations neighbours.
 
 ### Variable Importance
 

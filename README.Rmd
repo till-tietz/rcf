@@ -160,10 +160,9 @@ Mean squared difference in treatment effects 𝜏 across sub-samples created by 
 and control units in each sub-sample). Choose the split that maximizes this value.
   7. Keep recursively splitting each sub-sample of the tree fitting sample until no split can satisfy the minsize requirement. The tree is fully grown at this point.
   8. Push the honest estimation sample down the tree (i.e. subset the honest estimation 
-sample according to the splitting rules of the tree grown with the tree fitting sample). In each terminal leaf compute the average treatment effect with the honest estimation sample observations. These average treatment effects become the CATE estimates for each 
-terminal leaf. 
+sample according to the splitting rules of the tree grown with the tree fitting sample).
   9. Repeat 1-8 n_trees times. 
-  10. Push a test sample down each tree in the forest (i.e. subset the test sample according to the splitting rules of each tree in the forest). Record honest CATE estimates of all leaves a test sample observation falls into. Compute the mean of all these honest CATE estimates. This is the CATE for the given observation. 
+  10. Push a test sample down each tree in the forest (i.e. subset the test sample according to the splitting rules of each tree in the forest). For each observation, record the honest sample observations in each terminal leaf it falls into. Compute CATE for each observation using its honest sample observations neighbours. 
   
 ### Variable Importance 
 
