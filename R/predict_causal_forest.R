@@ -19,18 +19,33 @@ predict_causal_forest <- function(data, cf, predict_obb = TRUE){
     }
 
     cate <- function(x){
-      leaf <- tree_i[["cate_estimate"]][x,]
-      obs <- as.numeric(rownames(subset(oob_data, eval(parse(text = leaf[["leaf"]])))))
-      cate <- rep(leaf[["cate"]], length(obs))
-      obs <- cbind(obs,cate)
+      leaf <- tree_i[["cate_estimate"]][["filter"]][x]
+      obs <- as.numeric(rownames(subset(oob_data, eval(parse(text = leaf)))))
+      obs <- data.frame("obs" = obs)
+      obs[["val_t"]] <- list(tree_i[["cate_estimate"]][["outcome_t"]][[x]])
+      obs[["val_c"]] <- list(tree_i[["cate_estimate"]][["outcome_c"]][[x]])
+      return(obs)
     }
-    obs_cate <- furrr::future_map(1:nrow(tree_i[["cate_estimate"]]), ~cate(.x))
+    obs_cate <- furrr::future_map(1:length(tree_i[["cate_estimate"]][["filter"]]), ~cate(.x))
     obs_cate <- do.call(rbind,obs_cate)
     return(obs_cate)
   }
   cates <- furrr::future_map(1:length(cf), ~each_tree(.x), .progress = TRUE)
   cates <- as.data.frame(do.call(rbind, cates))
-  cates <- stats::aggregate(cates, list(obs_id = cates$obs), mean, na.rm = TRUE)
-  cates <- cates[,c("obs_id","cate")]
-  return(cates)
+  cates <- dplyr::group_split(dplyr::group_by(cates, obs))
+
+  each_obs <- function(x){
+    obs_i <- cates[[x]]
+    cate_i <- mean(unlist(obs_i[["val_t"]])) - mean(unlist(obs_i[["val_c"]]))
+    obs_i <- obs_i[1,"obs"]
+    out <- data.frame("obs" = obs_i,
+                      "cate" = cate_i)
+    return(out)
+  }
+
+  cates_out <- purrr::map(1:length(cates), ~each_obs(.x))
+  cates_out <- do.call(rbind, cates_out)
+  return(cates_out)
 }
+
+

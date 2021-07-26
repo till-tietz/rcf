@@ -10,8 +10,9 @@
 get_cate <- function(tree, data, treat, outcome){
   leafs <- tree[tree$state == "leaf", "filter"]
   leaf_data <- lapply(leafs, function(j) subset(data, eval(parse(text = j))))
-  cate <- sapply(leaf_data, function(j) mean(j[j[[treat]] == 1, outcome]) - mean(j[j[[treat]] == 0, outcome]))
-  leafs <- data.frame(leaf = leafs,
-                      cate = cate)
+  outcome_t <- lapply(leaf_data, function(j) j[j[[treat]] == 1, outcome])
+  outcome_c <- lapply(leaf_data, function(j) j[j[[treat]] == 0, outcome])
+
+  leafs <- list("filter" = leafs, "outcome_t" = outcome_t, "outcome_c" = outcome_c)
   return(leafs)
 }
