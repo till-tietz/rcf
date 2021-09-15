@@ -4,7 +4,7 @@
 \alias{predict_causal_forest}
 \title{Estimates conditional average treatment effects based on a trained causal forest and test data}
 \usage{
-predict_causal_forest(data, cf, predict_obb = TRUE)
+predict_causal_forest(data, cf, predict_oob = TRUE)
 }
 \arguments{
 \item{data}{a data frame with observations to predict and no NA}

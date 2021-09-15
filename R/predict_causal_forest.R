@@ -7,12 +7,12 @@
 #'@export
 
 
-predict_causal_forest <- function(data, cf, predict_obb = TRUE){
+predict_causal_forest <- function(data, cf, predict_oob = TRUE){
 
   each_tree <- function(x){
     tree_i <- cf[[x]]
 
-    if(predict_obb){
+    if(predict_oob){
       oob_data <- data[tree_i[["oob"]],]
     } else {
       oob_data <- data
