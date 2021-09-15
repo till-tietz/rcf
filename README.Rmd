@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # rcf
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/till-tietz/rcf/workflows/R-CMD-check/badge.svg)](https://github.com/till-tietz/rcf/actions)
 <!-- badges: end -->
 
 rcf is a simplified fully R based implementation of causal forests based on some features of Julie Tibshirani’s, Susan Athey’s, Stefan Wager’s and the grf lab team's causal forest functionality (https://grf-labs.github.io/grf/).
