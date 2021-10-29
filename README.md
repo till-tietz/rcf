@@ -74,24 +74,24 @@ cf <- rcf::causal_forest(n_trees = 1000, data = data, outcome = "V10",
                          honest_split = TRUE, honesty_fraction = 0.5)
 
 # predict cates
-cate <- rcf::predict_causal_forest(data = data, cf = cf, predict_obb = TRUE)
+cate <- rcf::predict_causal_forest(data = data, cf = cf, predict_oob = TRUE)
 ```
 
 predict\_causal\_forest returns a data.frame of observation ids and cate
 estimates
 
-| obs |      cate |
-| --: | --------: |
-|   1 | 0.1517060 |
-|   2 | 0.1663921 |
-|   3 | 0.1867550 |
-|   4 | 0.1694348 |
-|   5 | 0.2109231 |
-|   6 | 0.1851609 |
-|   7 | 0.2424766 |
-|   8 | 0.1939958 |
-|   9 | 0.1747390 |
-|  10 | 0.1942683 |
+| obs |        cate |
+| --: | ----------: |
+|   1 |   0.0664850 |
+|   2 |   0.0657153 |
+|   3 | \-0.0422869 |
+|   4 | \-0.0479427 |
+|   5 |   0.0306288 |
+|   6 |   0.0034505 |
+|   7 |   0.0651019 |
+|   8 |   0.0479582 |
+|   9 |   0.0750824 |
+|  10 |   0.0390407 |
 
 variable\_importance generates a data.frame of variable importance
 metrics
@@ -102,15 +102,15 @@ var_importance <- rcf::variable_importance(cf = cf, covariates = vars, n = 4, d 
 
 | variable | importance         |
 | :------- | :----------------- |
-| V6       | 0.142791400959832  |
-| V3       | 0.132746039050687  |
-| V7       | 0.115127210571297  |
-| V1       | 0.096193544145684  |
-| V4       | 0.089934915521662  |
-| V5       | 0.0889882322003813 |
-| V2       | 0.0810466110051936 |
-| V9       | 0.0658996778647032 |
-| V8       | 0.065321149168365  |
+| V8       | 0.130980702846472  |
+| V1       | 0.113053024729783  |
+| V6       | 0.10756606870013   |
+| V7       | 0.0991998189123423 |
+| V4       | 0.0946092467885236 |
+| V3       | 0.086677607379322  |
+| V2       | 0.0842329239997736 |
+| V5       | 0.0812721407956539 |
+| V9       | 0.0804572463358044 |
 
 ## Performance compared to grf
 
@@ -168,40 +168,40 @@ explicitly optimizing on treatment effect heterogeneity. This is
 achieved by recursively splitting a sample such as to maximize the
 following quantity of interest:
 
-![](man/figures/eq_1.PNG)
+\[max(MSD_p) = \alpha(\tau_{p_{i1}} - \tau_{p_{i2}})^2 - (1 - \alpha)\frac{1}{n}\sum_{j=1}^{2}(s_{p_{ij_{treat}}}^2 + s_{p_{ij_{control}}}^2)\]
 
-Mean squared difference in treatment effects 𝜏 across sub-samples
-created by a set of all possible partitions of a sample 𝑃 minus the sum
-of variances in outcomes for treatment and control units summed across
-sub-samples. The two components of the equation are weighted by the
-parameter 𝛼.
+Mean squared difference in treatment effects \(\tau\) across sub-samples
+created by a set of all possible partitions of a sample \(P\) minus the
+sum of variances in outcomes for treatment and control units summed
+across sub-samples. The two components of the equation are weighted by
+the parameter \(\alpha\).
 
 ### Algorithm
 
-1.  Draw a sample of size = n data \* feature\_fraction without
+1.  Draw a sample of \(size = n\_data * feature\_fraction\) without
     replacement
-2.  If honest\_split is TRUE, split this sample into a tree fitting
-    sample of size = n sample \* (1 – honesty\_fraction) and an honest
-    estimation sample of size = n sample \* (honesty\_fraction)
-3.  Draw a sample of covariates of size = n covariates \*
-    feature\_fraction
+2.  If honest\_split is `TRUE`, split this sample into a tree fitting
+    sample of \(size = n\_sample(1 – honesty\_fraction)\) and an honest
+    estimation sample of \(size = n\_sample(honesty\_fraction)\)
+3.  Draw a sample of covariates of
+    \(size = n\_covariates * feature\_fraction\)
 4.  Find unique values of all sampled covariates in the tree fitting
     sample
 5.  Split the tree fitting sample at each unique value and assess if
-    there are n \> minsize treatment and control observations in each
+    there are \(n > minsize\) treatment and control observations in each
     sub\_sample created by the split (keep only those split points where
     the minsize requirement is met)
-6.  For each valid split point compute EQ 1 (variance of treatment
-    effects across sub-samples minus sum of variances in outcomes for
-    treatment and control units in each sub-sample). Choose the split
-    that maximizes this value.
+6.  For each valid split point compute the above quantity of interest
+    (variance of treatment effects across sub-samples minus sum of
+    variances in outcomes for treatment and control units in each
+    sub-sample). Choose the split that maximizes this value.
 7.  Keep recursively splitting each sub-sample of the tree fitting
     sample until no split can satisfy the minsize requirement. The tree
     is fully grown at this point.
 8.  Push the honest estimation sample down the tree (i.e. subset the
     honest estimation sample according to the splitting rules of the
     tree grown with the tree fitting sample).
-9.  Repeat 1-8 n\_trees times.
+9.  Repeat 1-8 `n_trees` times.
 10. Push a test sample down each tree in the forest (i.e. subset the
     test sample according to the splitting rules of each tree in the
     forest). For each observation, record the honest sample observations
@@ -213,4 +213,7 @@ parameter 𝛼.
 Variable Importance is computed as a weighted sum of how often a
 variable was split at depth k within a tree.
 
-![](man/figures/eq_2.PNG)
+\[imp(x_j) = \frac{\sum_{k=1}^n\left[\frac{\sum_{all\;trees}number\,of\,depth\,k\,splits\,on\,x_j}{\sum_{all\;trees}total\,number\,of\,depth\,k\,splits}\right]k^{-d}}{\sum_{k=1}^nk^{-d}}\]
+Where:  
+\(n = maximum\,depth\,to\,consider\,splits\,at\)  
+\(d = decay\,paramater\)

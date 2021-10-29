@@ -72,7 +72,7 @@ cf <- rcf::causal_forest(n_trees = 1000, data = data, outcome = "V10",
                          honest_split = TRUE, honesty_fraction = 0.5)
 
 # predict cates
-cate <- rcf::predict_causal_forest(data = data, cf = cf, predict_obb = TRUE)
+cate <- rcf::predict_causal_forest(data = data, cf = cf, predict_oob = TRUE)
 ```
 
 predict_causal_forest returns a data.frame of observation ids and cate estimates
@@ -146,28 +146,31 @@ We'll test the performance of the rcf causal forest against a linear regression 
 rfc serves as an estimator for conditional average treatment effects by explicitly 
 optimizing on treatment effect heterogeneity. This is achieved by recursively splitting a sample such as to maximize the following quantity of interest: 
 
-![](man/figures/eq_1.PNG)
+$$max(MSD_p) = \alpha(\tau_{p_{i1}} - \tau_{p_{i2}})^2 - (1 - \alpha)\frac{1}{n}\sum_{j=1}^{2}(s_{p_{ij_{treat}}}^2 + s_{p_{ij_{control}}}^2)$$
 
-Mean squared difference in treatment effects 𝜏 across sub-samples created by a set of all possible partitions of a sample 𝑃 minus the sum of variances in outcomes for treatment and control units summed across sub-samples. The two components of the equation are weighted by the parameter 𝛼. 
+
+Mean squared difference in treatment effects $\tau$ across sub-samples created by a set of all possible partitions of a sample $P$ minus the sum of variances in outcomes for treatment and control units summed across sub-samples. The two components of the equation are weighted by the parameter $\alpha$. 
 
 ### Algorithm
 
-  1. Draw a sample of size = n data * feature_fraction without replacement 
-  2. If honest_split is TRUE, split this sample into a tree fitting sample of size = n sample * (1 –      honesty_fraction) and an honest estimation sample of size = n sample * (honesty_fraction) 
-  3. Draw a sample of covariates of size = n covariates * feature_fraction 
+  1. Draw a sample of $size = n\_data * feature\_fraction$ without replacement 
+  2. If honest_split is `TRUE`, split this sample into a tree fitting sample of $size = n\_sample(1 – honesty\_fraction)$ and an honest estimation sample of $size = n\_sample(honesty\_fraction)$ 
+  3. Draw a sample of covariates of $size = n\_covariates * feature\_fraction$ 
   4. Find unique values of all sampled covariates in the tree fitting sample 
-  5. Split the tree fitting sample at each unique value and assess if there are n > minsize treatment and control observations in each sub_sample created by the split (keep only those split points where the minsize requirement is met) 
-  6. For each valid split point compute EQ 1 (variance of treatment effects across sub-samples minus sum of variances in outcomes for treatment 
+  5. Split the tree fitting sample at each unique value and assess if there are $n > minsize$ treatment and control observations in each sub_sample created by the split (keep only those split points where the minsize requirement is met) 
+  6. For each valid split point compute the above quantity of interest (variance of treatment effects across sub-samples minus sum of variances in outcomes for treatment 
 and control units in each sub-sample). Choose the split that maximizes this value.
   7. Keep recursively splitting each sub-sample of the tree fitting sample until no split can satisfy the minsize requirement. The tree is fully grown at this point.
   8. Push the honest estimation sample down the tree (i.e. subset the honest estimation 
 sample according to the splitting rules of the tree grown with the tree fitting sample).
-  9. Repeat 1-8 n_trees times. 
+  9. Repeat 1-8 `n_trees` times. 
   10. Push a test sample down each tree in the forest (i.e. subset the test sample according to the splitting rules of each tree in the forest). For each observation, record the honest sample observations in each terminal leaf it falls into. Compute CATE for each observation using its honest sample observations neighbours. 
   
 ### Variable Importance 
 
 Variable Importance is computed as a weighted sum of how often a variable was split at depth k within a tree. 
 
-![](man/figures/eq_2.PNG)
-
+$$imp(x_j) = \frac{\sum_{k=1}^n\left[\frac{\sum_{all\;trees}number\,of\,depth\,k\,splits\,on\,x_j}{\sum_{all\;trees}total\,number\,of\,depth\,k\,splits}\right]k^{-d}}{\sum_{k=1}^nk^{-d}}$$
+Where: \
+$n = maximum\,depth\,to\,consider\,splits\,at$ \
+$d = decay\,paramater$
