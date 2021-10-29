@@ -80,18 +80,18 @@ cate <- rcf::predict_causal_forest(data = data, cf = cf, predict_oob = TRUE)
 predict\_causal\_forest returns a data.frame of observation ids and cate
 estimates
 
-| obs |        cate |
-| --: | ----------: |
-|   1 |   0.0664850 |
-|   2 |   0.0657153 |
-|   3 | \-0.0422869 |
-|   4 | \-0.0479427 |
-|   5 |   0.0306288 |
-|   6 |   0.0034505 |
-|   7 |   0.0651019 |
-|   8 |   0.0479582 |
-|   9 |   0.0750824 |
-|  10 |   0.0390407 |
+| obs |      cate |
+| --: | --------: |
+|   1 | 0.0747438 |
+|   2 | 0.1442352 |
+|   3 | 0.1347309 |
+|   4 | 0.1796071 |
+|   5 | 0.1534446 |
+|   6 | 0.1485099 |
+|   7 | 0.0513095 |
+|   8 | 0.1540657 |
+|   9 | 0.0592893 |
+|  10 | 0.1090305 |
 
 variable\_importance generates a data.frame of variable importance
 metrics
@@ -102,15 +102,15 @@ var_importance <- rcf::variable_importance(cf = cf, covariates = vars, n = 4, d 
 
 | variable | importance         |
 | :------- | :----------------- |
-| V8       | 0.130980702846472  |
-| V1       | 0.113053024729783  |
-| V6       | 0.10756606870013   |
-| V7       | 0.0991998189123423 |
-| V4       | 0.0946092467885236 |
-| V3       | 0.086677607379322  |
-| V2       | 0.0842329239997736 |
-| V5       | 0.0812721407956539 |
-| V9       | 0.0804572463358044 |
+| V6       | 0.126494773519164  |
+| V7       | 0.102355400696864  |
+| V2       | 0.100794425087108  |
+| V3       | 0.100682926829268  |
+| V8       | 0.0985087108013937 |
+| V9       | 0.0984529616724739 |
+| V4       | 0.0913728222996516 |
+| V1       | 0.082787456445993  |
+| V5       | 0.0765993031358885 |
 
 ## Performance compared to grf
 
@@ -168,7 +168,9 @@ explicitly optimizing on treatment effect heterogeneity. This is
 achieved by recursively splitting a sample such as to maximize the
 following quantity of interest:
 
-\[max(MSD_p) = \alpha(\tau_{p_{i1}} - \tau_{p_{i2}})^2 - (1 - \alpha)\frac{1}{n}\sum_{j=1}^{2}(s_{p_{ij_{treat}}}^2 + s_{p_{ij_{control}}}^2)\]
+![max(MSD\_p) = (*{p*{i1}} - *{p*{i2}})^2 - (1 -
+)*{j=1}<sup>{2}(s\_{p\_{ij\_{treat}}}</sup>2 +
+s*{p\_{ij\_{control}}}^2)](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+max%28MSD_p%29+%3D+%5Calpha%28%5Ctau_%7Bp_%7Bi1%7D%7D+-+%5Ctau_%7Bp_%7Bi2%7D%7D%29%5E2+-+%281+-+%5Calpha%29%5Cfrac%7B1%7D%7Bn%7D%5Csum_%7Bj%3D1%7D%5E%7B2%7D%28s_%7Bp_%7Bij_%7Btreat%7D%7D%7D%5E2+%2B+s_%7Bp_%7Bij_%7Bcontrol%7D%7D%7D%5E2%29%0A%0A)
 
 Mean squared difference in treatment effects \(\tau\) across sub-samples
 created by a set of all possible partitions of a sample \(P\) minus the
@@ -178,17 +180,17 @@ the parameter \(\alpha\).
 
 ### Algorithm
 
-1.  Draw a sample of \(size = n\_data * feature\_fraction\) without
+1.  Draw a sample of `size = n_data (feature_fraction)` without
     replacement
 2.  If honest\_split is `TRUE`, split this sample into a tree fitting
-    sample of \(size = n\_sample(1 – honesty\_fraction)\) and an honest
-    estimation sample of \(size = n\_sample(honesty\_fraction)\)
-3.  Draw a sample of covariates of
-    \(size = n\_covariates * feature\_fraction\)
+    sample of `size = n_sample (1 – honesty_fraction)` and an honest
+    estimation sample of `size = n_sample(honesty_fraction)`
+3.  Draw a sample of covariates of `size = n_covariates
+    (feature_fraction)`
 4.  Find unique values of all sampled covariates in the tree fitting
     sample
 5.  Split the tree fitting sample at each unique value and assess if
-    there are \(n > minsize\) treatment and control observations in each
+    there are `n > minsize` treatment and control observations in each
     sub\_sample created by the split (keep only those split points where
     the minsize requirement is met)
 6.  For each valid split point compute the above quantity of interest
@@ -213,7 +215,12 @@ the parameter \(\alpha\).
 Variable Importance is computed as a weighted sum of how often a
 variable was split at depth k within a tree.
 
-\[imp(x_j) = \frac{\sum_{k=1}^n\left[\frac{\sum_{all\;trees}number\,of\,depth\,k\,splits\,on\,x_j}{\sum_{all\;trees}total\,number\,of\,depth\,k\,splits}\right]k^{-d}}{\sum_{k=1}^nk^{-d}}\]
+![imp(x\_j) =
+)](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+imp%28x_j%29+%3D+%5Cfrac%7B%5Csum_%7Bk%3D1%7D%5En%5Cleft%5B%5Cfrac%7B%5Csum_%7Ball%5C%3Btrees%7Dnumber%5C%2Cof%5C%2Cdepth%5C%2Ck%5C%2Csplits%5C%2Con%5C%2Cx_j%7D%7B%5Csum_%7Ball%5C%3Btrees%7Dtotal%5C%2Cnumber%5C%2Cof%5C%2Cdepth%5C%2Ck%5C%2Csplits%7D%5Cright%5Dk%5E%7B-d%7D%7D%7B%5Csum_%7Bk%3D1%7D%5Enk%5E%7B-d%7D%7D%29%0A%0A)
+
 Where:  
-\(n = maximum\,depth\,to\,consider\,splits\,at\)  
-\(d = decay\,paramater\)
+![n =
+maximum,depth,to,consider,splits,at](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+n+%3D+maximum%5C%2Cdepth%5C%2Cto%5C%2Cconsider%5C%2Csplits%5C%2Cat%0A%0A)  
+
+![d =
+decay,paramater](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+d+%3D+decay%5C%2Cparamater%0A%0A)

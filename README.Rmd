@@ -146,18 +146,20 @@ We'll test the performance of the rcf causal forest against a linear regression 
 rfc serves as an estimator for conditional average treatment effects by explicitly 
 optimizing on treatment effect heterogeneity. This is achieved by recursively splitting a sample such as to maximize the following quantity of interest: 
 
-$$max(MSD_p) = \alpha(\tau_{p_{i1}} - \tau_{p_{i2}})^2 - (1 - \alpha)\frac{1}{n}\sum_{j=1}^{2}(s_{p_{ij_{treat}}}^2 + s_{p_{ij_{control}}}^2)$$
+![max(MSD_p) = \alpha(\tau_{p_{i1}} - \tau_{p_{i2}})^2 - (1 - \alpha)\frac{1}{n}\sum_{j=1}^{2}(s_{p_{ij_{treat}}}^2 + s_{p_{ij_{control}}}^2)
+
+](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+max%28MSD_p%29+%3D+%5Calpha%28%5Ctau_%7Bp_%7Bi1%7D%7D+-+%5Ctau_%7Bp_%7Bi2%7D%7D%29%5E2+-+%281+-+%5Calpha%29%5Cfrac%7B1%7D%7Bn%7D%5Csum_%7Bj%3D1%7D%5E%7B2%7D%28s_%7Bp_%7Bij_%7Btreat%7D%7D%7D%5E2+%2B+s_%7Bp_%7Bij_%7Bcontrol%7D%7D%7D%5E2%29%0A%0A)
 
 
 Mean squared difference in treatment effects $\tau$ across sub-samples created by a set of all possible partitions of a sample $P$ minus the sum of variances in outcomes for treatment and control units summed across sub-samples. The two components of the equation are weighted by the parameter $\alpha$. 
 
 ### Algorithm
 
-  1. Draw a sample of $size = n\_data * feature\_fraction$ without replacement 
-  2. If honest_split is `TRUE`, split this sample into a tree fitting sample of $size = n\_sample(1 – honesty\_fraction)$ and an honest estimation sample of $size = n\_sample(honesty\_fraction)$ 
-  3. Draw a sample of covariates of $size = n\_covariates * feature\_fraction$ 
+  1. Draw a sample of `size = n_data (feature_fraction)` without replacement 
+  2. If honest_split is `TRUE`, split this sample into a tree fitting sample of `size = n_sample (1 – honesty_fraction)` and an honest estimation sample of `size = n_sample(honesty_fraction)` 
+  3. Draw a sample of covariates of `size = n_covariates (feature_fraction)` 
   4. Find unique values of all sampled covariates in the tree fitting sample 
-  5. Split the tree fitting sample at each unique value and assess if there are $n > minsize$ treatment and control observations in each sub_sample created by the split (keep only those split points where the minsize requirement is met) 
+  5. Split the tree fitting sample at each unique value and assess if there are `n > minsize` treatment and control observations in each sub_sample created by the split (keep only those split points where the minsize requirement is met) 
   6. For each valid split point compute the above quantity of interest (variance of treatment effects across sub-samples minus sum of variances in outcomes for treatment 
 and control units in each sub-sample). Choose the split that maximizes this value.
   7. Keep recursively splitting each sub-sample of the tree fitting sample until no split can satisfy the minsize requirement. The tree is fully grown at this point.
@@ -170,7 +172,16 @@ sample according to the splitting rules of the tree grown with the tree fitting 
 
 Variable Importance is computed as a weighted sum of how often a variable was split at depth k within a tree. 
 
-$$imp(x_j) = \frac{\sum_{k=1}^n\left[\frac{\sum_{all\;trees}number\,of\,depth\,k\,splits\,on\,x_j}{\sum_{all\;trees}total\,number\,of\,depth\,k\,splits}\right]k^{-d}}{\sum_{k=1}^nk^{-d}}$$
+![imp(x_j) = \frac{\sum_{k=1}^n\left[\frac{\sum_{all\;trees}number\,of\,depth\,k\,splits\,on\,x_j}{\sum_{all\;trees}total\,number\,of\,depth\,k\,splits}\right]k^{-d}}{\sum_{k=1}^nk^{-d}})
+
+](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+imp%28x_j%29+%3D+%5Cfrac%7B%5Csum_%7Bk%3D1%7D%5En%5Cleft%5B%5Cfrac%7B%5Csum_%7Ball%5C%3Btrees%7Dnumber%5C%2Cof%5C%2Cdepth%5C%2Ck%5C%2Csplits%5C%2Con%5C%2Cx_j%7D%7B%5Csum_%7Ball%5C%3Btrees%7Dtotal%5C%2Cnumber%5C%2Cof%5C%2Cdepth%5C%2Ck%5C%2Csplits%7D%5Cright%5Dk%5E%7B-d%7D%7D%7B%5Csum_%7Bk%3D1%7D%5Enk%5E%7B-d%7D%7D%29%0A%0A)
+
+
 Where: \
-$n = maximum\,depth\,to\,consider\,splits\,at$ \
-$d = decay\,paramater$
+![n = maximum\,depth\,to\,consider\,splits\,at
+
+](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+n+%3D+maximum%5C%2Cdepth%5C%2Cto%5C%2Cconsider%5C%2Csplits%5C%2Cat%0A%0A) \
+
+![d = decay\,paramater
+
+](https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+d+%3D+decay%5C%2Cparamater%0A%0A)
