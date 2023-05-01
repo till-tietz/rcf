@@ -1,2 +1,3 @@
+useDynLib(rcf, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
-importFrom("stats", "setNames", "var")

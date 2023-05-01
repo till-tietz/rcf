@@ -4,11 +4,8 @@
 \name{rcf-package}
 \alias{rcf}
 \alias{rcf-package}
-\title{rcf: Heterogenous Treatment Effect Estimation}
+\title{rcf: Heterogenous Treatment Effect Estimation Using Random Forests}
 \description{
-rcf is a stripped down  experimental rebuild 
-    of the grf-labs causal forest algorithm in R. It supports
-    estimation of heterogenous treatment effects and variable
-    importance.
+rcf is a stripped down experimental rebuild of the grf-labs causal forest algorithm in R and C++. It supports estimation of heterogenous treatment effects and variable importance.
 }
 \keyword{internal}

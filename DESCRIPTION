@@ -1,20 +1,21 @@
 Package: rcf
 Type: Package
-Title: Heterogenous Treatment Effect Estimation
-Version: 1.0.0
+Title: Heterogenous Treatment Effect Estimation Using Random Forests
+Version: 1.0
+Date: 2023-05-01
 Author: Till Tietz
 Maintainer: Till Tietz <ttietz2014@gmail.com>
 Description: rcf is a stripped down  experimental rebuild 
-    of the grf-labs causal forest algorithm in R. It supports
+    of the grf-labs causal forest algorithm in R and C++. It supports
     estimation of heterogenous treatment effects and variable
     importance. 
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
 Imports: 
+    Rcpp (>= 1.0.9),
     purrr (>= 0.3.0),
     furrr (>= 0.2.1),
     stringr(>= 1.4.0),
     dplyr(>= 1.0.2),
     stats(>= 3.6.2)
-RoxygenNote: 7.1.1
+LinkingTo: Rcpp
+RoxygenNote: 7.2.2
